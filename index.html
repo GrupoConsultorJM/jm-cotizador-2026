@@ -131,7 +131,7 @@
       color: white;
     }
 
-    /* checkbox de póliza llamativo */
+    /* checkbox de póliza llamativo (solo PI) */
     .policy-wrap {
       border: 1.5px solid #F59E0B;
       background: #FFFBEB;
@@ -252,9 +252,11 @@
   // CONFIG (AJUSTABLE)
   // =======================
   const WHATSAPP_PHONE = "522228105300"; // <-- cambia a tu número real con 52
-  // Endpoint opcional para leads (cuando lo conectes a Wix Velo o Google Apps Script)
-  // Si está vacío, solo mostrará el resumen y no enviará a servidor.
-  const LEAD_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyfKn2EPL_6sVc8I-IosZHcWj35_VItQOyBZ0XrraCMhD4sBDAfQjhMpPAaxnjIi-QW/exec"; // e.g. "https://TU-ENDPOINT/lead"
+
+  // Endpoint opcional para leads (Apps Script / Wix)
+  // IMPORTANTE: con GitHub Pages suele bloquearse por CORS si intentas leer la respuesta.
+  // Este código lo manda en modo "no-cors" para que NO truene en el navegador.
+  const LEAD_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyfKn2EPL_6sVc8I-IosZHcWj35_VItQOyBZ0XrraCMhD4sBDAfQjhMpPAaxnjIi-QW/exec";
 
   // Precios 2026 (según lo que acordamos)
   const PRICES = {
@@ -387,7 +389,6 @@
         </div>
       `;
 
-      // handlers
       form.querySelectorAll("[data-pi]").forEach(btn => {
         btn.addEventListener("click", () => {
           state.piRange = btn.dataset.pi;
@@ -395,6 +396,7 @@
           recalc();
         });
       });
+
       $("policyMgmt").checked = state.policyMgmt;
       $("policyMgmt").addEventListener("change", (e)=>{
         state.policyMgmt = e.target.checked;
@@ -474,18 +476,15 @@
       form.querySelectorAll("[data-cc]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           state.courseCount = parseInt(btn.dataset.cc,10);
-          // auto selecciona cursos según cantidad
           const all = ["Extintores","Evacuación","Primeros Auxilios"];
           state.coursesSelected = all.slice(0, state.courseCount);
-          renderDynamicForm(); // re-render para actualizar checks
+          renderDynamicForm();
           recalc();
         });
       });
 
-      // set selected cc
       updateCourseCountButtons();
 
-      // set checks
       form.querySelectorAll("[data-course]").forEach(chk=>{
         const name = chk.dataset.course;
         chk.checked = state.coursesSelected.includes(name);
@@ -493,14 +492,11 @@
           const selected = Array.from(form.querySelectorAll("[data-course]"))
             .filter(x=>x.checked).map(x=>x.dataset.course);
 
-          // forzar cantidad exacta: no más de courseCount
           if(selected.length > state.courseCount){
             chk.checked = false;
             return;
           }
           state.coursesSelected = selected;
-
-          // si se desmarca y quedan menos, ok (pero WhatsApp lo indicará)
           recalc();
         });
       });
@@ -799,6 +795,7 @@
     }
   });
 
+  // ✅ CORRECCIÓN CORS: envío simple (no-cors) para que NO falle en GitHub Pages
   $("sendLead").addEventListener("click", async ()=>{
     const payload = {
       nombre: $("leadNombre").value.trim(),
@@ -817,7 +814,6 @@
       return;
     }
 
-    // Si no hay endpoint, solo mostramos confirmación
     if(!LEAD_ENDPOINT_URL){
       $("leadStatus").textContent = "Listo. (Aún sin endpoint) Copia el resumen y contáctalo por WhatsApp si deseas.";
       return;
@@ -825,15 +821,21 @@
 
     try{
       $("leadStatus").textContent = "Enviando...";
-      const res = await fetch(LEAD_ENDPOINT_URL, {
+
+      // Evita preflight y evita bloqueo CORS:
+      const body = new URLSearchParams(payload);
+
+      await fetch(LEAD_ENDPOINT_URL, {
         method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify(payload)
+        mode: "no-cors",
+        body,
+        keepalive: true
       });
-      if(!res.ok) throw new Error("Error al enviar: " + res.status);
-      $("leadStatus").textContent = "Solicitud enviada correctamente ✅";
+
+      // Como es no-cors, el navegador no puede leer respuesta, pero el POST sí sale
+      $("leadStatus").textContent = "Solicitud enviada ✅ (si tu endpoint está activo, ya quedó registrada).";
     }catch(err){
-      $("leadStatus").textContent = "No se pudo enviar. " + (err?.message || "");
+      $("leadStatus").textContent = "No se pudo enviar (revisa endpoint). " + (err?.message || "");
     }
   });
 
@@ -844,5 +846,3 @@
 </script>
 </body>
 </html>
-
-
