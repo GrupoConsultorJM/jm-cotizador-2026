@@ -1,25 +1,38 @@
-<!DOCTYPE html>
+from pathlib import Path
+import base64, textwrap
+
+logo_path = Path("/mnt/data/ESCUDO png(1).png")
+logo_b64 = base64.b64encode(logo_path.read_bytes()).decode("ascii")
+
+html = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cotizador Grupo Consultor JM</title>
 
-  <!-- Favicon inline para evitar 404 -->
-  <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="46" fill="%23F97316"/%3E%3Ctext x="50" y="62" font-size="44" text-anchor="middle" fill="white" font-family="Arial"%3EJM%3C/text%3E%3C/svg%3E'>
-
+  <link rel="icon" href="data:image/png;base64,{logo_b64}">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body {
+    :root {{
+      --jm-blue: #2471A3;
+      --jm-orange: #F58634;
+      --ink: #1D1D1F;
+      --muted: #6B7280;
+      --border: #D2D2D7;
+    }}
+
+    body {{
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-font-smoothing: antialiased;
       background-color: #FBFBFD;
-      color: #1D1D1F;
-    }
-    .apple-card {
-      background: rgba(255, 255, 255, 0.85);
+      color: var(--ink);
+    }}
+
+    .apple-card {{
+      background: rgba(255, 255, 255, 0.90);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border: 1px solid rgba(0, 0, 0, 0.06);
@@ -28,94 +41,141 @@
       transition: transform .18s ease, box-shadow .18s ease;
       position: relative;
       overflow: hidden;
-    }
-    .apple-card:hover { transform: translateY(-1px); box-shadow: 0 16px 35px rgba(0,0,0,0.08); }
-    .apple-input {
-      border: 1px solid #D2D2D7;
+    }}
+
+    .apple-card:hover {{
+      transform: translateY(-1px);
+      box-shadow: 0 16px 35px rgba(0,0,0,0.08);
+    }}
+
+    .apple-input {{
+      border: 1px solid var(--border);
       border-radius: 12px;
       padding: 12px;
       outline: none;
       width: 100%;
-      transition: border-color 0.2s ease;
+      transition: border-color .2s ease, box-shadow .2s ease;
       background: white;
-    }
-    .apple-input:focus { border-color: #0071E3; }
-    .selection-btn {
-      border: 1.5px solid #D2D2D7;
+    }}
+
+    .apple-input:focus {{
+      border-color: var(--jm-blue);
+      box-shadow: 0 0 0 3px rgba(36,113,163,.10);
+    }}
+
+    .selection-btn {{
+      border: 1.5px solid var(--border);
       padding: 10px 14px;
       border-radius: 12px;
-      font-size: 0.95rem;
-      transition: all 0.15s ease;
+      font-size: .95rem;
+      transition: all .15s ease;
       text-align: left;
       background: white;
-      color: #1D1D1F;
+      color: var(--ink);
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-    .selection-btn:hover { border-color: #AEB0B6; }
-    .selection-btn.selected {
-      background-color: #001A33; /* azul marino institucional */
+    }}
+
+    .selection-btn:hover {{
+      border-color: #AEB0B6;
+    }}
+
+    .selection-btn.selected {{
+      background-color: var(--jm-blue);
       color: white;
-      border-color: #001A33;
-    }
-    .selection-btn .icon {
-      width: 34px; height: 34px;
+      border-color: var(--jm-blue);
+    }}
+
+    .selection-btn .icon {{
+      width: 34px;
+      height: 34px;
       border-radius: 12px;
       display: grid;
       place-items: center;
-      background: rgba(0,0,0,0.04);
-    }
-    .selection-btn.selected .icon { background: rgba(255,255,255,0.14); }
+      background: rgba(0,0,0,.04);
+    }}
 
-    .pill-note {
-      background: #FFF9E5;
-      border: 1px solid #FFD640;
-      color: #856404;
+    .selection-btn.selected .icon {{
+      background: rgba(255,255,255,.16);
+    }}
+
+    .pill-note {{
+      background: #FFF8F1;
+      border: 1px solid rgba(245,134,52,.55);
+      color: #7A430B;
       padding: 12px;
       border-radius: 12px;
-      font-size: 0.9rem;
-    }
+      font-size: .9rem;
+    }}
 
-    .btn-primary {
-      background-color: #0071E3;
+    .quick-note {{
+      background: linear-gradient(135deg, rgba(245,134,52,.10), rgba(36,113,163,.07));
+      border: 1px solid rgba(245,134,52,.42);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: #55402F;
+    }}
+
+    .quick-note strong {{
+      color: var(--jm-orange);
+    }}
+
+    .btn-primary {{
+      background-color: var(--jm-blue);
       color: white;
       padding: 12px 18px;
       border-radius: 14px;
       font-weight: 600;
-      transition: transform .15s ease, background-color .15s ease;
+      transition: transform .15s ease, filter .15s ease;
       width: 100%;
-    }
-    .btn-primary:hover { background-color: #0077ED; transform: scale(1.01); }
+    }}
 
-    .btn-secondary {
+    .btn-primary:hover {{
+      filter: brightness(.96);
+      transform: scale(1.01);
+    }}
+
+    .btn-secondary {{
       background: white;
-      border: 1px solid #D2D2D7;
-      color: #1D1D1F;
+      border: 1px solid var(--border);
+      color: var(--ink);
       padding: 12px 18px;
       border-radius: 14px;
       font-weight: 600;
       transition: transform .15s ease, border-color .15s ease;
       width: 100%;
-    }
-    .btn-secondary:hover { border-color: #AEB0B6; transform: scale(1.01); }
+    }}
 
-    .clay-badge {
+    .btn-secondary:hover {{
+      border-color: #AEB0B6;
+      transform: scale(1.01);
+    }}
+
+    .jm-watermark {{
       position: absolute;
-      right: -10px;
-      bottom: -10px;
-      width: 160px;
-      height: 160px;
-      opacity: 0.12;
+      right: -20px;
+      bottom: -20px;
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      opacity: .085;
       pointer-events: none;
-      filter: blur(0px);
-      transform: rotate(6deg);
-    }
-    .muted { color: #6B7280; }
+      user-select: none;
+    }}
 
-    .toggle-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-    .toggle-btn {
-      border: 1.5px solid #D2D2D7;
+    .muted {{
+      color: var(--muted);
+    }}
+
+    .toggle-grid {{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }}
+
+    .toggle-btn {{
+      border: 1.5px solid var(--border);
       border-radius: 12px;
       padding: 10px 12px;
       text-align: center;
@@ -123,51 +183,64 @@
       color: #374151;
       background: white;
       transition: all .15s ease;
-    }
-    .toggle-btn:hover { border-color: #AEB0B6; }
-    .toggle-btn.selected {
-      background: #001A33;
-      border-color: #001A33;
-      color: white;
-    }
+    }}
 
-    /* checkbox de póliza llamativo (solo PI) */
-    .policy-wrap {
-      border: 1.5px solid #F59E0B;
-      background: #FFFBEB;
+    .toggle-btn:hover {{
+      border-color: #AEB0B6;
+    }}
+
+    .toggle-btn.selected {{
+      background: var(--jm-blue);
+      border-color: var(--jm-blue);
+      color: white;
+    }}
+
+    .policy-wrap {{
+      border: 1.5px solid rgba(245,134,52,.72);
+      background: #FFF8F1;
       border-radius: 14px;
-      padding: 12px 12px;
-    }
-    .policy-label { color: #92400E; font-weight: 700; }
+      padding: 12px;
+    }}
+
+    .policy-label {{
+      color: #8A4806;
+      font-weight: 700;
+    }}
+
+    @media (max-width: 640px) {{
+      .toggle-grid {{
+        grid-template-columns: 1fr;
+      }}
+    }}
   </style>
 </head>
 
 <body>
   <main class="max-w-6xl mx-auto px-4 py-8 md:py-10">
-    <header class="text-center mb-8">
+    <header class="text-center mb-6">
       <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Grupo Consultor JM</h1>
       <p class="mt-2 text-base md:text-lg muted">Cotizador de Servicios 2026 · Puebla, México</p>
     </header>
 
+    <div class="quick-note mb-6">
+      <strong>COTIZACIÓN RÁPIDA.</strong>
+      Esta herramienta genera un estimado inmediato y <b>no constituye una cotización formal</b>.
+      Su finalidad es brindar un aproximado del costo del servicio. Para una cotización formal,
+      personalizada o con alcances específicos, comunícate por WhatsApp.
+    </div>
+
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Columna izquierda -->
       <div class="apple-card p-5 md:p-6">
-        <svg class="clay-badge" viewBox="0 0 200 200" aria-hidden="true">
-          <defs>
-            <linearGradient id="g1" x1="0" x2="1">
-              <stop offset="0" stop-color="#F97316"/>
-              <stop offset="1" stop-color="#FDBA74"/>
-            </linearGradient>
-          </defs>
-          <circle cx="100" cy="100" r="78" fill="url(#g1)"/>
-          <circle cx="100" cy="100" r="52" fill="#0B2A4A"/>
-        </svg>
+        <img
+          class="jm-watermark"
+          src="data:image/png;base64,{logo_b64}"
+          alt=""
+          aria-hidden="true"
+        >
 
         <h2 class="text-xl font-semibold mb-4">1. Selecciona un servicio</h2>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="serviceGrid">
-          <!-- botones insertados por JS -->
-        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="serviceGrid"></div>
 
         <div class="mt-6">
           <h3 class="text-lg font-semibold mb-2">2. Detalles técnicos</h3>
@@ -177,7 +250,6 @@
         </div>
       </div>
 
-      <!-- Columna derecha -->
       <div class="apple-card p-5 md:p-6">
         <h2 class="text-xl font-semibold mb-2">Total estimado</h2>
         <div class="text-4xl md:text-5xl font-bold tracking-tight" id="total">$0.00</div>
@@ -192,7 +264,7 @@
         <div class="mt-5">
           <h3 class="text-sm font-semibold uppercase tracking-wide muted">Notas importantes</h3>
           <div class="mt-2 pill-note" id="notes">
-            Selecciona un servicio para ver notas (mínimos, póliza, DC-3, etc.).
+            Selecciona un servicio para ver notas.
           </div>
         </div>
 
@@ -202,18 +274,17 @@
         </div>
 
         <div class="mt-4 text-xs muted">
-          * El botón de “Solicitar contacto” puede enviar a Wix CMS o Google Sheet con un endpoint (lo dejamos listo para conectar).
+          * Los importes mostrados son estimados. Para una cotización formal, solicita atención por WhatsApp.
         </div>
       </div>
     </section>
 
-    <!-- Modal Lead -->
-    <div id="leadModal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4">
+    <div id="leadModal" class="fixed inset-0 hidden items-center justify-center bg-black/40 p-4 z-50">
       <div class="apple-card w-full max-w-lg p-5 md:p-6">
         <div class="flex items-start justify-between gap-4">
           <div>
             <h3 class="text-lg font-semibold">Solicitar contacto</h3>
-            <p class="muted text-sm mt-1">Capturamos datos para seguimiento.</p>
+            <p class="muted text-sm mt-1">Capturamos tus datos para seguimiento.</p>
           </div>
           <button id="closeLead" class="text-2xl leading-none muted" aria-label="Cerrar">×</button>
         </div>
@@ -221,19 +292,22 @@
         <div class="mt-4 space-y-3">
           <div>
             <label class="text-sm font-semibold">Nombre</label>
-            <input id="leadNombre" class="apple-input" placeholder="Tu nombre" />
+            <input id="leadNombre" class="apple-input" placeholder="Tu nombre">
           </div>
+
           <div>
             <label class="text-sm font-semibold">Negocio</label>
-            <input id="leadNegocio" class="apple-input" placeholder="Nombre del negocio" />
+            <input id="leadNegocio" class="apple-input" placeholder="Nombre del negocio">
           </div>
+
           <div>
             <label class="text-sm font-semibold">Teléfono</label>
-            <input id="leadTelefono" class="apple-input" placeholder="10 dígitos" />
+            <input id="leadTelefono" class="apple-input" placeholder="10 dígitos">
           </div>
+
           <div>
             <label class="text-sm font-semibold">Correo (opcional)</label>
-            <input id="leadCorreo" class="apple-input" placeholder="correo@ejemplo.com" />
+            <input id="leadCorreo" class="apple-input" placeholder="correo@ejemplo.com">
           </div>
 
           <div class="pill-note text-sm">
@@ -248,138 +322,145 @@
   </main>
 
 <script>
-  // =======================
-  // CONFIG (AJUSTABLE)
-  // =======================
-  const WHATSAPP_PHONE = "522228105300"; // <-- cambia a tu número real con 52
+  const WHATSAPP_PHONE = "522228105300";
 
-  // Endpoint opcional para leads (Apps Script / Wix)
-  // IMPORTANTE: con GitHub Pages suele bloquearse por CORS si intentas leer la respuesta.
-  // Este código lo manda en modo "no-cors" para que NO truene en el navegador.
-  const LEAD_ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyfKn2EPL_6sVc8I-IosZHcWj35_VItQOyBZ0XrraCMhD4sBDAfQjhMpPAaxnjIi-QW/exec";
+  const LEAD_ENDPOINT_URL =
+    "https://script.google.com/macros/s/AKfycbyfKn2EPL_6sVc8I-IosZHcWj35_VItQOyBZ0XrraCMhD4sBDAfQjhMpPAaxnjIi-QW/exec";
 
-  // Precios 2026 (según lo que acordamos)
-  const PRICES = {
+  const PRICES = {{
     PI_CHICO: 10000,
     PI_MEDIANO: 13000,
     PI_GRANDE: 17000,
-    POLICY_MGMT: 300, // solo PI (gestión, póliza la paga cliente a aseguradora)
+    POLICY_MGMT: 300,
 
     BI_STD: 1500,
     BI_CENTRO_STRUCT: 2700,
 
-    COURSE_1: 450, // por persona
-    COURSE_2: 500, // por persona
-    COURSE_3: 600, // por persona
+    COURSE_1: 450,
+    COURSE_2: 500,
+    COURSE_3: 600,
     MIN_PEOPLE: 4,
 
     DICT_ELECTRICO: 2000,
     DICT_ESTRUCTURAL: 2000,
-    DICT_GAS: 6000, // solo si > 50 L
+    DICT_GAS: 6000,
 
-    SIGN_INSTALLED: 60,   // por pieza instalada
-    EXTING_MAINT: 280,    // por equipo (mantenimiento)
+    SIGN_INSTALLED: 60,
+
+    EXTING_MAINT: 300,
+    EXTING_RECHARGE: 650,
+
     AD_BASE: 1000,
     AD_EXTRA: 250
-  };
+  }};
 
   const SERVICES = [
-    { id: "PI",  name: "Programa Interno", icon: "🏭", desc: "Por m² (chico/mediano/grande)" },
-    { id: "BI",  name: "Bajo Impacto", icon: "⚡", desc: "Estándar o Centro + dictamen estructural" },
-    { id: "CUR", name: "Cursos (DC-3)", icon: "🎓", desc: "1/2/3 cursos · por persona (mín. 4)" },
-    { id: "DICT",name: "Dictámenes", icon: "📄", desc: "Eléctrico / Estructural / Gas" },
-    { id: "SIGN",name: "Señalética", icon: "🧭", desc: "Por pieza instalada" },
-    { id: "EXT", name: "Manto. Extintores", icon: "🧯", desc: "Mantenimiento por equipo" },
-    { id: "ADS", name: "Anuncios", icon: "📣", desc: "1 base + adicionales" }
+    {{ id: "PI",   name: "Programa Interno",   icon: "🏭", desc: "Por m² (chico/mediano/grande)" }},
+    {{ id: "BI",   name: "Bajo Impacto",       icon: "⚡", desc: "Estándar o Centro + dictamen estructural" }},
+    {{ id: "CUR",  name: "Cursos (DC-3)",      icon: "🎓", desc: "1/2/3 cursos · por persona (mín. 4)" }},
+    {{ id: "DICT", name: "Dictámenes",          icon: "📄", desc: "Eléctrico / Estructural / Gas" }},
+    {{ id: "SIGN", name: "Señalética",          icon: "🧭", desc: "Por pieza instalada" }},
+    {{ id: "EXT",  name: "Manto. Extintores",   icon: "🧯", desc: "PQS 6 kg · mantenimiento o recarga" }},
+    {{ id: "ADS",  name: "Anuncios",            icon: "📣", desc: "1 base + adicionales" }}
   ];
 
-  let state = {
+  let state = {{
     service: null,
-    // PI
-    piRange: "CHICO", // CHICO|MEDIANO|GRANDE
+
+    piRange: "CHICO",
     policyMgmt: false,
-    // BI
-    biType: "STD", // STD|CENTRO
-    // Courses
-    courseCount: 3, // 1|2|3
+
+    biType: "STD",
+
+    courseCount: 3,
     people: 4,
-    coursesSelected: ["Extintores","Evacuación","Primeros Auxilios"],
-    // Dictámenes
-    dictType: "ELECTRICO", // ELECTRICO|ESTRUCTURAL|GAS
-    gasLiters: 0,
-    // Señalética
+    coursesSelected: ["Extintores", "Evacuación", "Primeros Auxilios"],
+
+    dictType: "ELECTRICO",
+
     signPieces: 1,
-    // Extintores
+
     extingCount: 1,
-    // Anuncios
+    extingType: "MAINT",
+
     adCount: 1
-  };
+  }};
 
   const $ = (id) => document.getElementById(id);
 
-  function money(n){
-    return new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"}).format(n);
-  }
+  function money(n) {{
+    return new Intl.NumberFormat("es-MX", {{
+      style: "currency",
+      currency: "MXN"
+    }}).format(n);
+  }}
 
-  function renderServiceGrid(){
+  function renderServiceGrid() {{
     const grid = $("serviceGrid");
     grid.innerHTML = "";
-    SERVICES.forEach(s => {
+
+    SERVICES.forEach(s => {{
       const btn = document.createElement("button");
       btn.className = "selection-btn";
       btn.type = "button";
       btn.dataset.service = s.id;
+
       btn.innerHTML = `
-        <span class="icon">${s.icon}</span>
+        <span class="icon">${{s.icon}}</span>
         <span class="flex-1">
-          <span class="font-semibold block">${s.name}</span>
-          <span class="text-xs muted block">${s.desc}</span>
+          <span class="font-semibold block">${{s.name}}</span>
+          <span class="text-xs muted block">${{s.desc}}</span>
         </span>
       `;
-      btn.addEventListener("click", () => {
+
+      btn.addEventListener("click", () => {{
         state.service = s.id;
         updateSelectionStyles();
         renderDynamicForm();
         recalc();
-      });
+      }});
+
       grid.appendChild(btn);
-    });
+    }});
+
     updateSelectionStyles();
-  }
+  }}
 
-  function updateSelectionStyles(){
-    document.querySelectorAll("[data-service]").forEach(btn => {
+  function updateSelectionStyles() {{
+    document.querySelectorAll("[data-service]").forEach(btn => {{
       btn.classList.toggle("selected", btn.dataset.service === state.service);
-    });
-  }
+    }});
+  }}
 
-  function renderDynamicForm(){
+  function renderDynamicForm() {{
     const form = $("dynamicForm");
     form.innerHTML = "";
 
-    if(!state.service){
+    if (!state.service) {{
       form.innerHTML = `<p class="muted">Selecciona un servicio para capturar datos.</p>`;
       return;
-    }
+    }}
 
-    if(state.service === "PI"){
+    if (state.service === "PI") {{
       form.innerHTML = `
         <div>
           <label class="text-sm font-semibold">Clasificación por m²</label>
           <p class="muted text-sm mt-1">Selecciona el rango (chico/mediano/grande).</p>
+
           <div class="toggle-grid mt-3">
             <button class="toggle-btn" data-pi="CHICO">0–120 m²</button>
-            <button class="toggle-btn" data-pi="MEDIANO">121–350 m²</button>
-            <button class="toggle-btn" data-pi="GRANDE">≥ 350 m²</button>
+            <button class="toggle-btn" data-pi="MEDIANO">121–500 m²</button>
+            <button class="toggle-btn" data-pi="GRANDE">501 m² en adelante</button>
           </div>
         </div>
 
         <div class="policy-wrap">
           <label class="policy-label flex items-center gap-3">
-            <input id="policyMgmt" type="checkbox" class="w-5 h-5 accent-amber-500">
-            Gestión de póliza de seguro (+${money(PRICES.POLICY_MGMT)})
+            <input id="policyMgmt" type="checkbox" class="w-5 h-5" style="accent-color:#F58634">
+            Gestión de póliza de seguro (+${{money(PRICES.POLICY_MGMT)}})
           </label>
-          <p class="text-sm mt-2" style="color:#92400E;">
+
+          <p class="text-sm mt-2" style="color:#8A4806;">
             La póliza <b>NO está incluida</b>. El costo de la póliza se paga directo a la aseguradora.
           </p>
         </div>
@@ -389,460 +470,580 @@
         </div>
       `;
 
-      form.querySelectorAll("[data-pi]").forEach(btn => {
-        btn.addEventListener("click", () => {
+      form.querySelectorAll("[data-pi]").forEach(btn => {{
+        btn.addEventListener("click", () => {{
           state.piRange = btn.dataset.pi;
           updatePiButtons();
           recalc();
-        });
-      });
+        }});
+      }});
 
       $("policyMgmt").checked = state.policyMgmt;
-      $("policyMgmt").addEventListener("change", (e)=>{
+      $("policyMgmt").addEventListener("change", e => {{
         state.policyMgmt = e.target.checked;
         recalc();
-      });
+      }});
 
       updatePiButtons();
       return;
-    }
+    }}
 
-    if(state.service === "BI"){
+    if (state.service === "BI") {{
       form.innerHTML = `
         <div>
           <label class="text-sm font-semibold">Tipo de Bajo Impacto</label>
-          <div class="toggle-grid mt-3" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+
+          <div class="toggle-grid mt-3" style="grid-template-columns:repeat(2,minmax(0,1fr));">
             <button class="toggle-btn" data-bi="STD">Estándar</button>
             <button class="toggle-btn" data-bi="CENTRO">Centro + Dictamen estructural</button>
           </div>
         </div>
+
         <div class="pill-note">
           En “Centro” el dictamen requerido es <b>estructural</b>.
         </div>
       `;
-      form.querySelectorAll("[data-bi]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
+
+      form.querySelectorAll("[data-bi]").forEach(btn => {{
+        btn.addEventListener("click", () => {{
           state.biType = btn.dataset.bi;
           updateBiButtons();
           recalc();
-        });
-      });
+        }});
+      }});
+
       updateBiButtons();
       return;
-    }
+    }}
 
-    if(state.service === "CUR"){
+    if (state.service === "CUR") {{
       form.innerHTML = `
         <div>
           <label class="text-sm font-semibold">Número de personas</label>
-          <input id="people" type="number" min="1" class="apple-input mt-2" value="${state.people}">
-          <p class="muted text-sm mt-1">Mínimo 4 personas para facturación. Si son menos, se cobra como 4.</p>
+          <input id="people" type="number" min="1" class="apple-input mt-2" value="${{state.people}}">
+          <p class="muted text-sm mt-1">
+            Mínimo 4 personas para facturación. Si son menos, se cobra como 4.
+          </p>
         </div>
 
         <div>
           <label class="text-sm font-semibold">Número de cursos</label>
+
           <div class="toggle-grid mt-3">
             <button class="toggle-btn" data-cc="1">1</button>
             <button class="toggle-btn" data-cc="2">2</button>
             <button class="toggle-btn" data-cc="3">3</button>
           </div>
+
           <p class="muted text-sm mt-2">El cliente puede elegir cualquier combinación.</p>
         </div>
 
         <div>
           <label class="text-sm font-semibold">Selecciona cursos</label>
+
           <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-            ${["Extintores","Evacuación","Primeros Auxilios"].map(c=>`
+            ${{["Extintores","Evacuación","Primeros Auxilios"].map(c => `
               <label class="border border-gray-200 rounded-xl p-3 bg-white flex items-center gap-2">
-                <input type="checkbox" class="w-4 h-4" data-course="${c}">
-                <span class="text-sm font-semibold">${c}</span>
+                <input type="checkbox" class="w-4 h-4" data-course="${{c}}">
+                <span class="text-sm font-semibold">${{c}}</span>
               </label>
-            `).join("")}
+            `).join("")}}
           </div>
-          <p class="muted text-sm mt-2">Incluye constancias y <b>DC-3</b>. No se permiten “oyentes”.</p>
+
+          <p class="muted text-sm mt-2">
+            Incluye constancias y <b>DC-3</b>. No se permiten “oyentes”.
+          </p>
         </div>
 
         <div class="pill-note">
-          Precio por persona: 1 curso ${money(PRICES.COURSE_1)}, 2 cursos ${money(PRICES.COURSE_2)}, 3 cursos ${money(PRICES.COURSE_3)}.
+          Precio por persona:
+          1 curso ${{money(PRICES.COURSE_1)}},
+          2 cursos ${{money(PRICES.COURSE_2)}},
+          3 cursos ${{money(PRICES.COURSE_3)}}.
         </div>
       `;
 
-      $("people").addEventListener("input", (e)=>{
-        const v = parseInt(e.target.value || "1",10);
-        state.people = isNaN(v) ? 1 : Math.max(1,v);
+      $("people").addEventListener("input", e => {{
+        const v = parseInt(e.target.value || "1", 10);
+        state.people = isNaN(v) ? 1 : Math.max(1, v);
         recalc();
-      });
+      }});
 
-      form.querySelectorAll("[data-cc]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          state.courseCount = parseInt(btn.dataset.cc,10);
+      form.querySelectorAll("[data-cc]").forEach(btn => {{
+        btn.addEventListener("click", () => {{
+          state.courseCount = parseInt(btn.dataset.cc, 10);
           const all = ["Extintores","Evacuación","Primeros Auxilios"];
           state.coursesSelected = all.slice(0, state.courseCount);
           renderDynamicForm();
           recalc();
-        });
-      });
+        }});
+      }});
 
       updateCourseCountButtons();
 
-      form.querySelectorAll("[data-course]").forEach(chk=>{
+      form.querySelectorAll("[data-course]").forEach(chk => {{
         const name = chk.dataset.course;
         chk.checked = state.coursesSelected.includes(name);
-        chk.addEventListener("change", ()=>{
-          const selected = Array.from(form.querySelectorAll("[data-course]"))
-            .filter(x=>x.checked).map(x=>x.dataset.course);
 
-          if(selected.length > state.courseCount){
+        chk.addEventListener("change", () => {{
+          const selected = Array.from(form.querySelectorAll("[data-course]"))
+            .filter(x => x.checked)
+            .map(x => x.dataset.course);
+
+          if (selected.length > state.courseCount) {{
             chk.checked = false;
             return;
-          }
+          }}
+
           state.coursesSelected = selected;
           recalc();
-        });
-      });
+        }});
+      }});
 
       return;
-    }
+    }}
 
-    if(state.service === "DICT"){
+    if (state.service === "DICT") {{
       form.innerHTML = `
         <div>
           <label class="text-sm font-semibold">Tipo de dictamen</label>
-          <div class="toggle-grid mt-3" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+
+          <div class="toggle-grid mt-3">
             <button class="toggle-btn" data-d="ELECTRICO">Eléctrico</button>
             <button class="toggle-btn" data-d="ESTRUCTURAL">Estructural</button>
             <button class="toggle-btn" data-d="GAS">Gas LP</button>
           </div>
         </div>
 
-        <div id="gasBlock" class="mt-2 hidden">
-          <label class="text-sm font-semibold">Litros de gas LP (total)</label>
-          <input id="gasLiters" type="number" min="0" class="apple-input mt-2" value="${state.gasLiters}">
-          <p class="muted text-sm mt-1">El dictamen de gas aplica cuando el cliente usa <b>más de 50 L</b> (tanque estacionario o maxigas).</p>
-        </div>
-
-        <div class="pill-note">
-          Dictamen Gas: ${money(PRICES.DICT_GAS)} (solo si > 50 L).
+        <div class="pill-note" id="dictNote">
+          Selecciona un tipo de dictamen.
         </div>
       `;
 
-      form.querySelectorAll("[data-d]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
+      form.querySelectorAll("[data-d]").forEach(btn => {{
+        btn.addEventListener("click", () => {{
           state.dictType = btn.dataset.d;
           updateDictButtons();
+          updateDictNote();
           recalc();
-          toggleGasBlock();
-        });
-      });
-
-      const gasInp = $("gasLiters");
-      if(gasInp){
-        gasInp.addEventListener("input",(e)=>{
-          const v = parseInt(e.target.value||"0",10);
-          state.gasLiters = isNaN(v) ? 0 : Math.max(0,v);
-          recalc();
-        });
-      }
+        }});
+      }});
 
       updateDictButtons();
-      toggleGasBlock();
+      updateDictNote();
       return;
-    }
+    }}
 
-    if(state.service === "SIGN"){
+    if (state.service === "SIGN") {{
       form.innerHTML = `
         <div>
           <label class="text-sm font-semibold">Número de piezas</label>
-          <input id="signPieces" type="number" min="1" class="apple-input mt-2" value="${state.signPieces}">
-          <p class="muted text-sm mt-1">Precio por pieza instalada: ${money(PRICES.SIGN_INSTALLED)}</p>
+          <input id="signPieces" type="number" min="1" class="apple-input mt-2" value="${{state.signPieces}}">
+          <p class="muted text-sm mt-1">
+            Precio por pieza instalada: ${{money(PRICES.SIGN_INSTALLED)}}
+          </p>
         </div>
       `;
-      $("signPieces").addEventListener("input",(e)=>{
-        const v = parseInt(e.target.value||"1",10);
-        state.signPieces = isNaN(v) ? 1 : Math.max(1,v);
-        recalc();
-      });
-      return;
-    }
 
-    if(state.service === "EXT"){
+      $("signPieces").addEventListener("input", e => {{
+        const v = parseInt(e.target.value || "1", 10);
+        state.signPieces = isNaN(v) ? 1 : Math.max(1, v);
+        recalc();
+      }});
+
+      return;
+    }}
+
+    if (state.service === "EXT") {{
       form.innerHTML = `
         <div>
+          <label class="text-sm font-semibold">Servicio para extintor PQS de 6 kg</label>
+
+          <div class="toggle-grid mt-3" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+            <button class="toggle-btn" data-ext="MAINT">
+              Mantenimiento · ${{money(PRICES.EXTING_MAINT)}}
+            </button>
+
+            <button class="toggle-btn" data-ext="RECHARGE">
+              Recarga · ${{money(PRICES.EXTING_RECHARGE)}}
+            </button>
+          </div>
+        </div>
+
+        <div>
           <label class="text-sm font-semibold">Número de equipos</label>
-          <input id="extingCount" type="number" min="1" class="apple-input mt-2" value="${state.extingCount}">
-          <p class="muted text-sm mt-1">Precio por mantenimiento: ${money(PRICES.EXTING_MAINT)} (recarga se cotiza aparte).</p>
+          <input id="extingCount" type="number" min="1" class="apple-input mt-2" value="${{state.extingCount}}">
+          <p class="muted text-sm mt-1">Precios aplicables a extintor PQS de 6 kg.</p>
         </div>
       `;
-      $("extingCount").addEventListener("input",(e)=>{
-        const v = parseInt(e.target.value||"1",10);
-        state.extingCount = isNaN(v) ? 1 : Math.max(1,v);
-        recalc();
-      });
-      return;
-    }
 
-    if(state.service === "ADS"){
+      form.querySelectorAll("[data-ext]").forEach(btn => {{
+        btn.addEventListener("click", () => {{
+          state.extingType = btn.dataset.ext;
+          updateExtButtons();
+          recalc();
+        }});
+      }});
+
+      $("extingCount").addEventListener("input", e => {{
+        const v = parseInt(e.target.value || "1", 10);
+        state.extingCount = isNaN(v) ? 1 : Math.max(1, v);
+        recalc();
+      }});
+
+      updateExtButtons();
+      return;
+    }}
+
+    if (state.service === "ADS") {{
       form.innerHTML = `
         <div>
           <label class="text-sm font-semibold">Número total de anuncios</label>
-          <input id="adCount" type="number" min="1" class="apple-input mt-2" value="${state.adCount}">
-          <p class="muted text-sm mt-1">1 anuncio base ${money(PRICES.AD_BASE)} + ${money(PRICES.AD_EXTRA)} por anuncio adicional.</p>
+          <input id="adCount" type="number" min="1" class="apple-input mt-2" value="${{state.adCount}}">
+          <p class="muted text-sm mt-1">
+            1 anuncio base ${{money(PRICES.AD_BASE)}} + ${{money(PRICES.AD_EXTRA)}} por anuncio adicional.
+          </p>
         </div>
       `;
-      $("adCount").addEventListener("input",(e)=>{
-        const v = parseInt(e.target.value||"1",10);
-        state.adCount = isNaN(v) ? 1 : Math.max(1,v);
+
+      $("adCount").addEventListener("input", e => {{
+        const v = parseInt(e.target.value || "1", 10);
+        state.adCount = isNaN(v) ? 1 : Math.max(1, v);
         recalc();
-      });
+      }});
+
       return;
-    }
-  }
+    }}
+  }}
 
-  function updatePiButtons(){
-    document.querySelectorAll("[data-pi]").forEach(b=>{
+  function updatePiButtons() {{
+    document.querySelectorAll("[data-pi]").forEach(b => {{
       b.classList.toggle("selected", b.dataset.pi === state.piRange);
-    });
-  }
-  function updateBiButtons(){
-    document.querySelectorAll("[data-bi]").forEach(b=>{
-      b.classList.toggle("selected", b.dataset.bi === state.biType);
-    });
-  }
-  function updateCourseCountButtons(){
-    document.querySelectorAll("[data-cc]").forEach(b=>{
-      b.classList.toggle("selected", parseInt(b.dataset.cc,10) === state.courseCount);
-    });
-  }
-  function updateDictButtons(){
-    document.querySelectorAll("[data-d]").forEach(b=>{
-      b.classList.toggle("selected", b.dataset.d === state.dictType);
-    });
-  }
-  function toggleGasBlock(){
-    const block = $("gasBlock");
-    if(!block) return;
-    block.classList.toggle("hidden", state.dictType !== "GAS");
-  }
+    }});
+  }}
 
-  function recalc(){
+  function updateBiButtons() {{
+    document.querySelectorAll("[data-bi]").forEach(b => {{
+      b.classList.toggle("selected", b.dataset.bi === state.biType);
+    }});
+  }}
+
+  function updateCourseCountButtons() {{
+    document.querySelectorAll("[data-cc]").forEach(b => {{
+      b.classList.toggle(
+        "selected",
+        parseInt(b.dataset.cc, 10) === state.courseCount
+      );
+    }});
+  }}
+
+  function updateDictButtons() {{
+    document.querySelectorAll("[data-d]").forEach(b => {{
+      b.classList.toggle("selected", b.dataset.d === state.dictType);
+    }});
+  }}
+
+  function updateDictNote() {{
+    const note = $("dictNote");
+    if (!note) return;
+
+    if (state.dictType === "GAS") {{
+      note.innerHTML =
+        `Dictamen Gas LP: <b>${{money(PRICES.DICT_GAS)}}</b> · Precio único para capacidades de <b>50 a 1,000 L</b>.`;
+    }} else if (state.dictType === "ELECTRICO") {{
+      note.innerHTML =
+        `Dictamen eléctrico: <b>${{money(PRICES.DICT_ELECTRICO)}}</b>.`;
+    }} else {{
+      note.innerHTML =
+        `Dictamen estructural: <b>${{money(PRICES.DICT_ESTRUCTURAL)}}</b>.`;
+    }}
+  }}
+
+  function updateExtButtons() {{
+    document.querySelectorAll("[data-ext]").forEach(b => {{
+      b.classList.toggle("selected", b.dataset.ext === state.extingType);
+    }});
+  }}
+
+  function recalc() {{
     let total = 0;
     const lines = [];
     const notes = [];
 
-    if(!state.service){
+    if (!state.service) {{
       $("total").textContent = money(0);
       $("breakdown").innerHTML = `<p class="muted">—</p>`;
-      $("notes").textContent = "Selecciona un servicio para ver notas (mínimos, póliza, DC-3, etc.).";
+      $("notes").textContent = "Selecciona un servicio para ver notas.";
       return;
-    }
+    }}
 
-    if(state.service === "PI"){
+    if (state.service === "PI") {{
       let base = PRICES.PI_CHICO;
       let label = "PI Chico (0–120 m²)";
-      if(state.piRange === "MEDIANO"){ base = PRICES.PI_MEDIANO; label = "PI Mediano (121–350 m²)"; }
-      if(state.piRange === "GRANDE"){ base = PRICES.PI_GRANDE; label = "PI Grande (≥ 350 m²)"; }
+
+      if (state.piRange === "MEDIANO") {{
+        base = PRICES.PI_MEDIANO;
+        label = "PI Mediano (121–500 m²)";
+      }}
+
+      if (state.piRange === "GRANDE") {{
+        base = PRICES.PI_GRANDE;
+        label = "PI Grande (501 m² en adelante)";
+      }}
 
       total += base;
-      lines.push(`✓ ${label}: <b>${money(base)}</b>`);
+      lines.push(`✓ ${{label}}: <b>${{money(base)}}</b>`);
       notes.push("Incluye 1 visita anual.");
-      notes.push("Póliza NO incluida (el cliente paga directo a la aseguradora).");
+      notes.push("Póliza NO incluida; el cliente paga directo a la aseguradora.");
 
-      if(state.policyMgmt){
+      if (state.policyMgmt) {{
         total += PRICES.POLICY_MGMT;
-        lines.push(`✓ Gestión de póliza: <b>${money(PRICES.POLICY_MGMT)}</b>`);
-        notes.push("La gestión es solo el trámite; el costo de la póliza lo paga el cliente.");
-      }
-    }
+        lines.push(`✓ Gestión de póliza: <b>${{money(PRICES.POLICY_MGMT)}}</b>`);
+        notes.push("La gestión es únicamente el trámite; el costo de la póliza lo paga el cliente.");
+      }}
+    }}
 
-    if(state.service === "BI"){
-      if(state.biType === "STD"){
+    if (state.service === "BI") {{
+      if (state.biType === "STD") {{
         total += PRICES.BI_STD;
-        lines.push(`✓ BI Estándar: <b>${money(PRICES.BI_STD)}</b>`);
+        lines.push(`✓ BI Estándar: <b>${{money(PRICES.BI_STD)}}</b>`);
         notes.push("Trámite de bajo impacto estándar.");
-      } else {
+      }} else {{
         total += PRICES.BI_CENTRO_STRUCT;
-        lines.push(`✓ BI Centro + Dictamen estructural: <b>${money(PRICES.BI_CENTRO_STRUCT)}</b>`);
+        lines.push(`✓ BI Centro + Dictamen estructural: <b>${{money(PRICES.BI_CENTRO_STRUCT)}}</b>`);
         notes.push("En Centro el dictamen requerido es estructural.");
-      }
-    }
+      }}
+    }}
 
-    if(state.service === "CUR"){
+    if (state.service === "CUR") {{
       const peopleCharged = Math.max(PRICES.MIN_PEOPLE, state.people || 1);
+
       let perPerson = PRICES.COURSE_3;
-      if(state.courseCount === 1) perPerson = PRICES.COURSE_1;
-      if(state.courseCount === 2) perPerson = PRICES.COURSE_2;
+      if (state.courseCount === 1) perPerson = PRICES.COURSE_1;
+      if (state.courseCount === 2) perPerson = PRICES.COURSE_2;
 
       const subtotal = perPerson * peopleCharged;
       total += subtotal;
 
-      const selectedList = (state.coursesSelected && state.coursesSelected.length)
-        ? state.coursesSelected.join(", ")
-        : "— (selección pendiente)";
+      const selectedList =
+        state.coursesSelected && state.coursesSelected.length
+          ? state.coursesSelected.join(", ")
+          : "— (selección pendiente)";
 
-      lines.push(`✓ ${state.courseCount} curso(s) para ${peopleCharged} persona(s) (mín. 4): <b>${money(subtotal)}</b>`);
-      lines.push(`• Cursos: <b>${selectedList}</b>`);
+      lines.push(
+        `✓ ${{state.courseCount}} curso(s) para ${{peopleCharged}} persona(s) (mín. 4): <b>${{money(subtotal)}}</b>`
+      );
+
+      lines.push(`• Cursos: <b>${{selectedList}}</b>`);
 
       notes.push("Incluye constancias y DC-3.");
-      notes.push("No se permiten oyentes (toda persona debe registrarse y pagar).");
-      if(state.people < PRICES.MIN_PEOPLE){
-        notes.push(`Se cobra mínimo ${PRICES.MIN_PEOPLE} personas aunque asistan menos.`);
-      }
-    }
+      notes.push("No se permiten oyentes.");
 
-    if(state.service === "DICT"){
-      if(state.dictType === "ELECTRICO"){
+      if (state.people < PRICES.MIN_PEOPLE) {{
+        notes.push(`Se cobra mínimo ${{PRICES.MIN_PEOPLE}} personas aunque asistan menos.`);
+      }}
+    }}
+
+    if (state.service === "DICT") {{
+      if (state.dictType === "ELECTRICO") {{
         total += PRICES.DICT_ELECTRICO;
-        lines.push(`✓ Dictamen eléctrico: <b>${money(PRICES.DICT_ELECTRICO)}</b>`);
-      }
-      if(state.dictType === "ESTRUCTURAL"){
-        total += PRICES.DICT_ESTRUCTURAL;
-        lines.push(`✓ Dictamen estructural: <b>${money(PRICES.DICT_ESTRUCTURAL)}</b>`);
-      }
-      if(state.dictType === "GAS"){
-        const liters = state.gasLiters || 0;
-        if(liters > 50){
-          total += PRICES.DICT_GAS;
-          lines.push(`✓ Dictamen Gas LP (>50 L): <b>${money(PRICES.DICT_GAS)}</b>`);
-        } else {
-          lines.push(`⚠ Dictamen Gas LP seleccionado, pero litros = ${liters}.`);
-          notes.push("El dictamen de gas aplica solo si el consumo total es mayor a 50 L.");
-        }
-      }
-    }
+        lines.push(`✓ Dictamen eléctrico: <b>${{money(PRICES.DICT_ELECTRICO)}}</b>`);
+      }}
 
-    if(state.service === "SIGN"){
+      if (state.dictType === "ESTRUCTURAL") {{
+        total += PRICES.DICT_ESTRUCTURAL;
+        lines.push(`✓ Dictamen estructural: <b>${{money(PRICES.DICT_ESTRUCTURAL)}}</b>`);
+      }}
+
+      if (state.dictType === "GAS") {{
+        total += PRICES.DICT_GAS;
+        lines.push(`✓ Dictamen Gas LP (50–1,000 L): <b>${{money(PRICES.DICT_GAS)}}</b>`);
+        notes.push("Precio único para capacidades de 50 a 1,000 L.");
+      }}
+    }}
+
+    if (state.service === "SIGN") {{
       const n = Math.max(1, state.signPieces || 1);
       const subtotal = n * PRICES.SIGN_INSTALLED;
-      total += subtotal;
-      lines.push(`✓ Señalética instalada (${n} pza x ${money(PRICES.SIGN_INSTALLED)}): <b>${money(subtotal)}</b>`);
-      notes.push("El diseño/medidas especiales se cotizan aparte si aplica.");
-    }
 
-    if(state.service === "EXT"){
+      total += subtotal;
+
+      lines.push(
+        `✓ Señalética instalada (${{n}} pza x ${{money(PRICES.SIGN_INSTALLED)}}): <b>${{money(subtotal)}}</b>`
+      );
+
+      notes.push("El diseño o medidas especiales se cotizan aparte si aplica.");
+    }}
+
+    if (state.service === "EXT") {{
       const n = Math.max(1, state.extingCount || 1);
-      const subtotal = n * PRICES.EXTING_MAINT;
-      total += subtotal;
-      lines.push(`✓ Mantenimiento de extintores (${n} eq x ${money(PRICES.EXTING_MAINT)}): <b>${money(subtotal)}</b>`);
-      notes.push("Recarga se cotiza aparte (si aplica).");
-    }
+      const isRecharge = state.extingType === "RECHARGE";
+      const unit = isRecharge ? PRICES.EXTING_RECHARGE : PRICES.EXTING_MAINT;
+      const label = isRecharge ? "Recarga" : "Mantenimiento";
+      const subtotal = n * unit;
 
-    if(state.service === "ADS"){
-      const n = Math.max(1, state.adCount || 1);
-      const subtotal = PRICES.AD_BASE + Math.max(0, n - 1) * PRICES.AD_EXTRA;
       total += subtotal;
-      lines.push(`✓ Anuncios (${n} total): <b>${money(subtotal)}</b>`);
-      if(n > 1) lines.push(`• Base ${money(PRICES.AD_BASE)} + Adicionales ${money((n-1)*PRICES.AD_EXTRA)}`);
-    }
+
+      lines.push(
+        `✓ ${{label}} extintor PQS 6 kg (${{n}} eq x ${{money(unit)}}): <b>${{money(subtotal)}}</b>`
+      );
+
+      notes.push("Precio aplicable a extintor PQS de 6 kg.");
+    }}
+
+    if (state.service === "ADS") {{
+      const n = Math.max(1, state.adCount || 1);
+      const subtotal =
+        PRICES.AD_BASE + Math.max(0, n - 1) * PRICES.AD_EXTRA;
+
+      total += subtotal;
+
+      lines.push(`✓ Anuncios (${{n}} total): <b>${{money(subtotal)}}</b>`);
+
+      if (n > 1) {{
+        lines.push(
+          `• Base ${{money(PRICES.AD_BASE)}} + Adicionales ${{money((n - 1) * PRICES.AD_EXTRA)}}`
+        );
+      }}
+    }}
 
     $("total").textContent = money(total);
-    $("breakdown").innerHTML = lines.map(l=>`<div class="text-sm">${l}</div>`).join("") || `<p class="muted">—</p>`;
-    $("notes").innerHTML = (notes.length ? notes.map(n=>`• ${n}`).join("<br>") : "—");
-  }
 
-  function buildWhatsappMessage(){
-    const serviceName = SERVICES.find(s=>s.id===state.service)?.name || "Servicio";
+    $("breakdown").innerHTML =
+      lines.map(l => `<div class="text-sm">${{l}}</div>`).join("") ||
+      `<p class="muted">—</p>`;
+
+    $("notes").innerHTML =
+      notes.length
+        ? notes.map(n => `• ${{n}}`).join("<br>")
+        : "—";
+  }}
+
+  function buildWhatsappMessage() {{
+    const serviceName =
+      SERVICES.find(s => s.id === state.service)?.name || "Servicio";
+
     const totalText = $("total").textContent;
-    const breakdownText = Array.from($("breakdown").querySelectorAll("div"))
+
+    const breakdownText = Array
+      .from($("breakdown").querySelectorAll("div"))
       .map(d => d.textContent.trim())
       .filter(Boolean);
 
-    const notesText = $("notes").innerText.split("\n").map(s=>s.trim()).filter(Boolean);
+    const notesText = $("notes")
+      .innerText
+      .split("\\n")
+      .map(s => s.trim())
+      .filter(Boolean);
 
     const msg = [
-      `Cotización - Grupo Consultor JM`,
-      `Servicio: ${serviceName}`,
-      `Total estimado: ${totalText}`,
-      ``,
-      `Desglose:`,
-      ...breakdownText.map(x=>`- ${x}`),
-      ``,
-      `Notas:`,
-      ...notesText.map(x=>`- ${x}`),
-    ].join("\n");
+      "Cotización rápida - Grupo Consultor JM",
+      `Servicio: ${{serviceName}}`,
+      `Total estimado: ${{totalText}}`,
+      "",
+      "Desglose:",
+      ...breakdownText.map(x => `- ${{x}}`),
+      "",
+      "Notas:",
+      ...notesText.map(x => `- ${{x}}`),
+      "",
+      "Este importe es un estimado y no constituye una cotización formal."
+    ].join("\\n");
 
     return encodeURIComponent(msg);
-  }
+  }}
 
-  $("btnWhats").addEventListener("click", ()=>{
-    if(!state.service){
+  $("btnWhats").addEventListener("click", () => {{
+    if (!state.service) {{
       alert("Selecciona un servicio para generar WhatsApp.");
       return;
-    }
-    const text = buildWhatsappMessage();
-    const url = `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
-    window.open(url, "_blank");
-  });
+    }}
 
-  // Lead modal
+    const text = buildWhatsappMessage();
+    const url = `https://wa.me/${{WHATSAPP_PHONE}}?text=${{text}}`;
+
+    window.open(url, "_blank");
+  }});
+
   const modal = $("leadModal");
-  $("btnLead").addEventListener("click", ()=>{
-    if(!state.service){
+
+  $("btnLead").addEventListener("click", () => {{
+    if (!state.service) {{
       alert("Selecciona un servicio antes de solicitar contacto.");
       return;
-    }
+    }}
+
     $("leadStatus").textContent = "";
     modal.classList.remove("hidden");
     modal.classList.add("flex");
-  });
-  $("closeLead").addEventListener("click", ()=>{
+  }});
+
+  $("closeLead").addEventListener("click", () => {{
     modal.classList.add("hidden");
     modal.classList.remove("flex");
-  });
-  modal.addEventListener("click",(e)=>{
-    if(e.target === modal){
+  }});
+
+  modal.addEventListener("click", e => {{
+    if (e.target === modal) {{
       modal.classList.add("hidden");
       modal.classList.remove("flex");
-    }
-  });
+    }}
+  }});
 
-  // ✅ CORRECCIÓN CORS: envío simple (no-cors) para que NO falle en GitHub Pages
-  $("sendLead").addEventListener("click", async ()=>{
-    const payload = {
+  $("sendLead").addEventListener("click", async () => {{
+    const payload = {{
       nombre: $("leadNombre").value.trim(),
       negocio: $("leadNegocio").value.trim(),
       telefono: $("leadTelefono").value.trim(),
       correo: $("leadCorreo").value.trim(),
-      servicio: SERVICES.find(s=>s.id===state.service)?.name || "",
+      servicio: SERVICES.find(s => s.id === state.service)?.name || "",
       total: $("total").textContent,
       desglose: $("breakdown").innerText,
       notas: $("notes").innerText,
       timestamp: new Date().toISOString()
-    };
+    }};
 
-    if(!payload.nombre || !payload.negocio || !payload.telefono){
-      $("leadStatus").textContent = "Faltan datos: nombre, negocio y teléfono son obligatorios.";
+    if (!payload.nombre || !payload.negocio || !payload.telefono) {{
+      $("leadStatus").textContent =
+        "Faltan datos: nombre, negocio y teléfono son obligatorios.";
       return;
-    }
+    }}
 
-    if(!LEAD_ENDPOINT_URL){
-      $("leadStatus").textContent = "Listo. (Aún sin endpoint) Copia el resumen y contáctalo por WhatsApp si deseas.";
+    if (!LEAD_ENDPOINT_URL) {{
+      $("leadStatus").textContent =
+        "Listo. Aún no hay un endpoint configurado.";
       return;
-    }
+    }}
 
-    try{
+    try {{
       $("leadStatus").textContent = "Enviando...";
 
-      // Evita preflight y evita bloqueo CORS:
       const body = new URLSearchParams(payload);
 
-      await fetch(LEAD_ENDPOINT_URL, {
+      await fetch(LEAD_ENDPOINT_URL, {{
         method: "POST",
         mode: "no-cors",
         body,
         keepalive: true
-      });
+      }});
 
-      // Como es no-cors, el navegador no puede leer respuesta, pero el POST sí sale
-      $("leadStatus").textContent = "Solicitud enviada ✅ (si tu endpoint está activo, ya quedó registrada).";
-    }catch(err){
-      $("leadStatus").textContent = "No se pudo enviar (revisa endpoint). " + (err?.message || "");
-    }
-  });
+      $("leadStatus").textContent = "Solicitud enviada ✅";
+    }} catch (err) {{
+      $("leadStatus").textContent =
+        "No se pudo enviar. " + (err?.message || "");
+    }}
+  }});
 
-  // INIT
   renderServiceGrid();
   renderDynamicForm();
   recalc();
 </script>
 </body>
 </html>
+"""
+
+out = Path("/mnt/data/index_cotizador_JM_2026_actualizado.html")
+out.write_text(html, encoding="utf-8")
+
+print(f"Archivo listo: {out.name}")
+print(f"Tamaño: {out.stat().st_size/1024:.1f} KB")
